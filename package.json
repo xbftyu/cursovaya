@@ -1,0 +1,11 @@
+{
+  "name": "forum-server",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "express-rate-limit": "^8.3.2",
+    "express-validator": "^7.3.2"
+  }
+}

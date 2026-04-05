@@ -1,134 +1,182 @@
 const Post = require('../models/Post');
-const Comment = require('../models/Comment');
 
-// @desc    Get all posts
+// @desc    Fetch all posts (with pagination, sort, search)
 // @route   GET /api/posts
 // @access  Public
-const getPosts = async (req, res, next) => {
-    try {
-        const posts = await Post.find()
-            .populate('author', 'username')
-            .sort({ createdAt: -1 });
-        res.status(200).json(posts);
-    } catch (error) {
-        next(error);
+const getPosts = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    let query = {};
+
+    if (req.query.search) {
+      query.$text = { $search: req.query.search };
     }
+    
+    if (req.query.category) {
+      query.category = req.query.category;
+    }
+
+    let sortConfig = { createdAt: -1 }; // default new
+    if (req.query.sort === 'popular') {
+      sortConfig = { views: -1 };
+    }
+
+    const posts = await Post.find(query)
+      .populate('author', 'username avatar')
+      .populate('category', 'name')
+      .populate('tags', 'name')
+      .sort(sortConfig)
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Post.countDocuments(query);
+
+    res.json({
+      posts,
+      page,
+      pages: Math.ceil(total / limit),
+      total
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
 };
 
-// @desc    Get single post along with its comments
+// @desc    Fetch single post
 // @route   GET /api/posts/:id
 // @access  Public
-const getPost = async (req, res, next) => {
-    try {
-        const post = await Post.findById(req.params.id).populate('author', 'username');
-        if (!post) {
-            res.status(404);
-            throw new Error('Post not found');
-        }
+const getPostById = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id)
+      .populate('author', 'username avatar')
+      .populate('category', 'name');
 
-        const comments = await Comment.find({ postId: req.params.id }).populate(
-            'author',
-            'username'
-        ).sort({ createdAt: 1 });
-
-        res.status(200).json({ post, comments });
-    } catch (error) {
-        next(error);
+    if (post) {
+      // Increment view count
+      post.views += 1;
+      await post.save();
+      res.json(post);
+    } else {
+      res.status(404).json({ message: 'Post not found' });
     }
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
 };
 
-// @desc    Create post
+// @desc    Create a post
 // @route   POST /api/posts
 // @access  Private
-const createPost = async (req, res, next) => {
-    try {
-        const { title, content } = req.body;
+const createPost = async (req, res) => {
+  try {
+    const { title, content, category, tags, image } = req.body;
 
-        if (!title || !content) {
-            res.status(400);
-            throw new Error('Please add title and content');
-        }
+    const post = new Post({
+      title,
+      content,
+      category: category || null,
+      tags: tags || [],
+      image: image || `https://picsum.photos/seed/${Date.now()}/600/300`,
+      author: req.user._id
+    });
 
-        const post = await Post.create({
-            title,
-            content,
-            author: req.user.id,
-        });
-
-        const populatedPost = await Post.findById(post._id).populate('author', 'username');
-
-        res.status(201).json(populatedPost);
-    } catch (error) {
-        next(error);
-    }
+    const createdPost = await post.save();
+    await createdPost.populate('author', 'username avatar');
+    if (createdPost.category) await createdPost.populate('category', 'name');
+    if (createdPost.tags && createdPost.tags.length) await createdPost.populate('tags', 'name');
+    res.status(201).json(createdPost);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
 };
 
-// @desc    Delete post
+// @desc    Delete a post
 // @route   DELETE /api/posts/:id
 // @access  Private
-const deletePost = async (req, res, next) => {
-    try {
-        const post = await Post.findById(req.params.id);
+const deletePost = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
 
-        if (!post) {
-            res.status(404);
-            throw new Error('Post not found');
-        }
-
-        // Check for user
-        if (!req.user) {
-            res.status(401);
-            throw new Error('User not found');
-        }
-
-        // Make sure the logged in user matches the post author
-        if (post.author.toString() !== req.user.id) {
-            res.status(401);
-            throw new Error('User not authorized');
-        }
-
-        await post.deleteOne();
-
-        // Also delete comments associated with post
-        await Comment.deleteMany({ postId: req.params.id });
-
-        res.status(200).json({ id: req.params.id });
-    } catch (error) {
-        next(error);
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
     }
+
+    // Check ownership or moderator/admin rights
+    if (post.author.toString() !== req.user._id.toString() && req.user.role !== 'admin' && req.user.role !== 'moderator') {
+      return res.status(401).json({ message: 'User not authorized to delete this post' });
+    }
+
+    await post.deleteOne();
+    res.json({ message: 'Post removed' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
 };
 
-// @desc    Add comment to post
-// @route   POST /api/posts/:id/comment
+// @desc    Like / Unlike a post
+// @route   PUT /api/posts/:id/like
 // @access  Private
-const addComment = async (req, res, next) => {
-    try {
-        const { text } = req.body;
-        const postId = req.params.id;
+const toggleLike = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
 
-        if (!text) {
-            res.status(400);
-            throw new Error('Please add comment text');
-        }
+    const isLiked = post.likes.includes(req.user._id);
 
-        const comment = await Comment.create({
-            text,
-            author: req.user.id,
-            postId,
-        });
-
-        const populatedComment = await Comment.findById(comment._id).populate('author', 'username');
-
-        res.status(201).json(populatedComment);
-    } catch (error) {
-        next(error);
+    if (isLiked) {
+      post.likes = post.likes.filter((id) => id.toString() !== req.user._id.toString());
+    } else {
+      post.likes.push(req.user._id);
     }
+
+    await post.save();
+    res.json({ likes: post.likes });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+// @desc    Update a post
+// @route   PUT /api/posts/:id
+// @access  Private
+const updatePost = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    // Check ownership or moderator/admin rights
+    if (post.author.toString() !== req.user._id.toString() && req.user.role !== 'admin' && req.user.role !== 'moderator') {
+      return res.status(401).json({ message: 'User not authorized to edit this post' });
+    }
+
+    post.title = req.body.title || post.title;
+    post.content = req.body.content || post.content;
+    if (req.body.category !== undefined) post.category = req.body.category || null;
+    if (req.body.tags !== undefined) post.tags = req.body.tags;
+    if (req.body.image) post.image = req.body.image;
+
+    const updatedPost = await post.save();
+    await updatedPost.populate('author', 'username avatar');
+    if (updatedPost.category) await updatedPost.populate('category', 'name');
+    if (updatedPost.tags && updatedPost.tags.length) await updatedPost.populate('tags', 'name');
+
+    res.json(updatedPost);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
 };
 
 module.exports = {
-    getPosts,
-    getPost,
-    createPost,
-    deletePost,
-    addComment,
+  getPosts,
+  getPostById,
+  createPost,
+  deletePost,
+  toggleLike,
+  updatePost
 };
