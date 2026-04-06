@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 const Register = () => {
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
@@ -9,13 +10,15 @@ const Register = () => {
   
   const { register } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
 
   const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const onSubmit = async e => {
     e.preventDefault();
     if (!formData.username || !formData.email || !formData.password) {
-      setError('Please fill all fields');
+      setError(t('register.fillAll'));
       return;
     }
     setLoading(true);
@@ -33,12 +36,12 @@ const Register = () => {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '4rem 0' }}>
       <div className="card" style={{ maxWidth: '400px', width: '100%' }}>
-        <h2 style={{ textAlign: 'center', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>Join the Forum</h2>
-        <p style={{ textAlign: 'center', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Create a new account</p>
+        <h2 style={{ textAlign: 'center', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>{t('register.title')}</h2>
+        <p style={{ textAlign: 'center', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>{t('register.subtitle')}</p>
 
         <form onSubmit={onSubmit}>
           <div className="form-group">
-            <label className="form-label">Username</label>
+            <label className="form-label">{t('register.username')}</label>
             <input
               type="text"
               name="username"
@@ -50,7 +53,7 @@ const Register = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Email Address</label>
+            <label className="form-label">{t('register.email')}</label>
             <input
               type="email"
               name="email"
@@ -62,7 +65,7 @@ const Register = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Password</label>
+            <label className="form-label">{t('register.password')}</label>
             <input
               type="password"
               name="password"
@@ -76,13 +79,13 @@ const Register = () => {
           {error && <div style={{ color: 'var(--danger)', textAlign: 'center', marginBottom: '1.5rem' }}>{error}</div>}
 
           <button type="submit" className="btn btn-primary" style={{ width: '100%' }} disabled={loading}>
-            {loading ? 'Creating...' : 'Register'}
+            {loading ? t('register.registering') : t('register.registerBtn')}
           </button>
         </form>
 
         <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-          Already have an account?{' '}
-          <Link to="/login" style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>Login here</Link>
+          {t('register.hasAccount')}{' '}
+          <Link to="/login" style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>{t('register.loginHere')}</Link>
         </p>
       </div>
     </div>

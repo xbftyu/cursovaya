@@ -5,6 +5,7 @@ import { useToast } from '../hooks/useToast';
 import Loader from '../components/Loader';
 import { getAvatarUrl } from '../utils/avatarHelper';
 import { Users, UserPlus, UserCheck, UserX, Star, RefreshCw, Mail } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const Friends = () => {
   const { user, updateUser } = useAuth();
@@ -14,6 +15,7 @@ const Friends = () => {
   const [suggested, setSuggested] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState({});
+  const { t } = useTranslation();
 
   const fetchAll = useCallback(async () => {
     if (!user) { setLoading(false); return; }
@@ -79,7 +81,7 @@ const Friends = () => {
             <Users size={28} color="white" />
           </div>
           <div>
-            <h1 style={{ fontSize:'2rem', fontWeight:'800', margin:0 }}>Friends</h1>
+            <h1 style={{ fontSize:'2rem', fontWeight:'800', margin:0 }}>{t('friends.title')}{t('friends.titleCol')}</h1>
             <p style={{ color:'var(--text-muted)', margin:0, fontSize:'0.9rem' }}>{friends.length} connection{friends.length !== 1 ? 's' : ''}</p>
           </div>
         </div>

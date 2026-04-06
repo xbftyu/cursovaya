@@ -111,6 +111,7 @@ const generatePopularPosts = async (req, res) => {
     const Category = require('../models/Category');
 
     const adminUser = await User.findById(req.user._id);
+    const allUsers = await User.find({});
 
     const categories = await Category.find({});
     const randomCategory = categories.length > 0 ? categories[Math.floor(Math.random() * categories.length)]._id : null;
@@ -125,10 +126,11 @@ const generatePopularPosts = async (req, res) => {
 
     const mockPosts = [];
     for (let i = 0; i < 3; i++) {
+      const randomUser = allUsers.length > 0 ? allUsers[Math.floor(Math.random() * allUsers.length)] : adminUser;
       const post = new Post({
         title: mockTitles[Math.floor(Math.random() * mockTitles.length)] + ` #${Math.floor(Math.random() * 1000)}`,
         content: "This is a brilliantly written post containing profound insights into technology and the modern era. People are reading this and finding it incredibly useful for their day-to-day lives.",
-        author: adminUser._id,
+        author: randomUser._id,
         category: randomCategory,
         image: `https://picsum.photos/seed/${Math.random()}/800/400`,
         views: Math.floor(Math.random() * 5000) + 100, // random popular views

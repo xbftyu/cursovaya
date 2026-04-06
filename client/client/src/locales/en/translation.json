@@ -1,0 +1,136 @@
+{
+  "navbar": {
+    "home": "Home",
+    "popular": "Popular",
+    "interests": "Interests",
+    "create": "Create",
+    "friends": "Friends",
+    "admin": "Admin",
+    "profile": "Profile",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register"
+  },
+  "home": {
+    "titlePart1": "Discussion ",
+    "titlePart2": "Topics",
+    "subtitle": "Join the conversation and share your knowledge",
+    "failedLoad": "Failed to load posts",
+    "noPosts": "No posts found. Be the first to create one!"
+  },
+  "login": {
+    "welcome": "Welcome Back",
+    "subtitle": "Login to your account",
+    "email": "Email Address",
+    "password": "Password",
+    "fillAll": "Please fill all fields",
+    "loginBtn": "Login",
+    "loggingIn": "Logging in...",
+    "noAccount": "Don't have an account?",
+    "registerHere": "Register here"
+  },
+  "register": {
+    "title": "Create Account",
+    "subtitle": "Join the community today",
+    "username": "Username",
+    "email": "Email Address",
+    "password": "Password",
+    "fillAll": "Please fill all fields",
+    "registerBtn": "Register",
+    "registering": "Registering...",
+    "hasAccount": "Already have an account?",
+    "loginHere": "Login here"
+  },
+  "createPost": {
+    "title": "Create New ",
+    "titleCol": "Post",
+    "subtitle": "Share your thoughts with the community",
+    "postTitle": "Post Title",
+    "content": "Content",
+    "tags": "Tags (comma separated)",
+    "image": "Attach Image",
+    "submit": "Create Post",
+    "submitting": "Creating...",
+    "success": "Post created successfully!"
+  },
+  "friends": {
+    "title": "Your ",
+    "titleCol": "Friends",
+    "subtitle": "Connect with developers",
+    "requests": "Friend Requests",
+    "noRequests": "No pending friend requests",
+    "accept": "Accept",
+    "reject": "Reject",
+    "myFriends": "My Friends",
+    "noFriends": "You don't have any friends yet.",
+    "users": "Discover Users",
+    "noUsers": "No users found.",
+    "add": "Add Friend",
+    "sent": "Request Sent"
+  },
+  "profile": {
+    "title": "Your ",
+    "titleCol": "Profile",
+    "subtitle": "Manage your public profile",
+    "role": "Role",
+    "username": "Username",
+    "changeAvatar": "Change Avatar",
+    "about": "About Me",
+    "skills": "Skills (comma separated)",
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "updateSuccess": "Profile updated successfully!",
+    "myPosts": "My Posts",
+    "loading": "Loading profile..."
+  },
+  "interests": {
+    "title": "Your ",
+    "titleCol": "Interests",
+    "subtitle": "Discover content based on your favorite tags",
+    "select": "Select your interests to see a personalized feed",
+    "save": "Save Interests",
+    "feed": "Your Personalized Feed",
+    "noPosts": "No posts found for your interests. Try selecting more!",
+    "loading": "Loading..."
+  },
+  "popular": {
+    "title": "Popular ",
+    "titleCol": "Posts",
+    "subtitle": "The most discussed topics right now",
+    "noPosts": "No popular posts found."
+  },
+  "postPage": {
+    "by": "By",
+    "tags": "Tags",
+    "delete": "Delete Post",
+    "comments": "Comments",
+    "addComment": "Add a comment...",
+    "postComment": "Post Comment",
+    "posting": "Posting...",
+    "noComments": "No comments yet. Be the first!"
+  },
+  "admin": {
+    "title": "Admin ",
+    "titleCol": "Panel",
+    "subtitle": "Manage users and content",
+    "users": "Users Management",
+    "posts": "Posts Management",
+    "username": "Username",
+    "email": "Email",
+    "role": "Role",
+    "actions": "Actions",
+    "makeAdmin": "Make Admin",
+    "makeMod": "Make Moderator",
+    "delete": "Delete",
+    "loading": "Loading admin data..."
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Go Back"
+  }
+}

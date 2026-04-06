@@ -7,6 +7,7 @@ import EmptyState from '../components/EmptyState';
 import { useToast } from '../hooks/useToast';
 import { UserPlus, ChevronRight, Settings, Camera, Sun, Moon } from 'lucide-react';
 import { getAvatarUrl, SERVER_BASE } from '../utils/avatarHelper';
+import { useTranslation } from 'react-i18next';
 
 const Profile = () => {
     const { user, updateUser } = useAuth();
@@ -17,6 +18,7 @@ const Profile = () => {
     const [editForm, setEditForm] = useState({ username: '', email: '', bio: '', avatar: '' });
     const [saving, setSaving] = useState(false);
     const { addToast, ToastContainer } = useToast();
+    const { t } = useTranslation();
     const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
 
     useEffect(() => {
@@ -130,18 +132,18 @@ const Profile = () => {
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '30px', margin: '40px 0' }}>
                 
-                {/* Left Section: User Posts */}
+               {/* Left Section: User Posts */}
                 <div>
                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
-                        <h2 style={{ fontSize: '1.8rem', fontWeight: '800' }}>Your <span style={{ color: 'var(--accent-primary)' }}>Discussions</span></h2>
-                        <span className="badge" style={{ padding: '0.5rem 1rem' }}>{posts.length} Posts</span>
+                        <h2 style={{ fontSize: '1.8rem', fontWeight: '800' }}>{t('profile.title')} <span style={{ color: 'var(--accent-primary)' }}>{t('profile.titleCol')}</span></h2>
+                        <span className="badge" style={{ padding: '0.5rem 1rem' }}>{posts.length} {t('profile.myPosts')}</span>
                    </div>
 
                    {posts.length === 0 ? (
                        <EmptyState
-                           title="No Posts Yet"
+                           title={t('profile.myPosts')}
                            message="You haven't participated in any discussions."
-                           actionText="Create Post"
+                           actionText={t('navbar.create')}
                            actionLink="/create-post"
                        />
                    ) : (

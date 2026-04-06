@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { Upload, X, FileText, Type, Image as ImageIcon, Hash, Plus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const CreatePost = () => {
   const [formData, setFormData] = useState({ title: '', content: '', newCategory: '' });
@@ -11,6 +12,7 @@ const CreatePost = () => {
   const [imagePreviewUrl, setImagePreviewUrl] = useState('');
   const [{ loading, error }, setStatus] = useState({ loading: false, error: null });
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -96,15 +98,15 @@ const CreatePost = () => {
           <div className="card" style={{ padding: '40px' }}>
             <div style={{ marginBottom: '30px', textAlign: 'center' }}>
               <h2 style={{ fontSize: '2.5rem', fontWeight: '800', color: 'var(--text-primary)' }}>
-                Create <span style={{ color: 'var(--accent-primary)' }}>Post</span>
+                {t('createPost.title')} <span style={{ color: 'var(--accent-primary)' }}>{t('createPost.titleCol')}</span>
               </h2>
-              <p style={{ color: 'var(--text-muted)', marginTop: '8px' }}>Share your thoughts with the community</p>
+              <p style={{ color: 'var(--text-muted)', marginTop: '8px' }}>{t('createPost.subtitle')}</p>
             </div>
 
             <form onSubmit={onSubmit}>
               <div className="form-group">
                 <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Type size={16} /> Title
+                  <Type size={16} /> {t('createPost.postTitle')}
                 </label>
                 <input
                   type="text"
@@ -119,7 +121,7 @@ const CreatePost = () => {
 
               <div className="form-group">
                 <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Hash size={16} /> Interests / Tags
+                  <Hash size={16} /> {t('createPost.tags')}
                   <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
                     {selectedTags.length} selected
                   </span>
@@ -177,7 +179,7 @@ const CreatePost = () => {
 
               <div className="form-group">
                 <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <ImageIcon size={16} /> Image
+                  <ImageIcon size={16} /> {t('createPost.image')}
                 </label>
                 
                 {!imagePreviewUrl ? (
@@ -243,7 +245,7 @@ const CreatePost = () => {
 
               <div className="form-group">
                 <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <FileText size={16} /> Content
+                  <FileText size={16} /> {t('createPost.content')}
                 </label>
                 <textarea
                   name="content"
@@ -280,7 +282,7 @@ const CreatePost = () => {
                   style={{ flex: 2, padding: '14px' }}
                   disabled={loading}
                 >
-                  {loading ? 'Creating...' : 'Publish'}
+                  {loading ? t('createPost.submitting') : t('createPost.submit')}
                 </button>
                 <button
                   type="button"
@@ -288,7 +290,7 @@ const CreatePost = () => {
                   className="btn btn-secondary"
                   style={{ flex: 1, padding: '14px' }}
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
               </div>
             </form>

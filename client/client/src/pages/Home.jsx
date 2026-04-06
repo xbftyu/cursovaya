@@ -3,11 +3,13 @@ import api from '../services/api';
 import PostCard from '../components/PostCard';
 import SkeletonCard from '../components/SkeletonCard';
 import { useToast } from '../hooks/useToast';
+import { useTranslation } from 'react-i18next';
 
 const Home = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const { addToast, ToastContainer } = useToast();
+    const { t } = useTranslation();
 
     // Filters and Pagination could be added here
     useEffect(() => {
@@ -18,22 +20,22 @@ const Home = () => {
                 setPosts(data.posts || []);
             } catch (error) {
                 console.error(error);
-                addToast("Failed to load posts", "error");
+                addToast(t('home.failedLoad'), "error");
             } finally {
                 setLoading(false);
             }
         };
 
         fetchPosts();
-    }, [addToast]);
+    }, [addToast, t]);
 
     return (
         <div>
             <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                 <h1 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '0.5rem' }}>
-                    Discussion <span style={{ color: 'var(--accent-primary)' }}>Topics</span>
+                    {t('home.titlePart1')} <span style={{ color: 'var(--accent-primary)' }}>{t('home.titlePart2')}</span>
                 </h1>
-                <p style={{ color: 'var(--text-muted)' }}>Join the conversation and share your knowledge</p>
+                <p style={{ color: 'var(--text-muted)' }}>{t('home.subtitle')}</p>
             </div>
 
             {loading ? (
@@ -42,7 +44,7 @@ const Home = () => {
                 </div>
             ) : posts.length === 0 ? (
                 <div className="text-center mt-4">
-                    <p style={{ color: 'var(--text-muted)' }}>No posts found. Be the first to create one!</p>
+                    <p style={{ color: 'var(--text-muted)' }}>{t('home.noPosts')}</p>
                 </div>
             ) : (
                 <div className="posts-grid">

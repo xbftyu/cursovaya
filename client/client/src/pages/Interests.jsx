@@ -5,6 +5,7 @@ import SkeletonCard from '../components/SkeletonCard';
 import EmptyState from '../components/EmptyState';
 import { useToast } from '../hooks/useToast';
 import { Hash, Sparkles, TrendingUp, Search } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const Interests = () => {
     const [categories, setCategories] = useState([]);
@@ -13,6 +14,7 @@ const Interests = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
     const { addToast, ToastContainer } = useToast();
+    const { t } = useTranslation();
 
 
     useEffect(() => {
@@ -60,9 +62,9 @@ const Interests = () => {
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
             <div style={{ textAlign: 'center', marginBottom: '3rem', marginTop: '2rem' }}>
                 <h1 style={{ fontSize: '2.5rem', fontWeight: '800', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
-                    <Sparkles style={{ color: 'var(--accent-primary)' }} /> Explore <span style={{ color: 'var(--accent-primary)' }}>Interests</span>
+                    <Sparkles style={{ color: 'var(--accent-primary)' }} /> {t('interests.title')} <span style={{ color: 'var(--accent-primary)' }}>{t('interests.titleCol')}</span>
                 </h1>
-                <p style={{ color: 'var(--text-secondary)', marginTop: '10px' }}>Discover discussions tailored to your passion</p>
+                <p style={{ color: 'var(--text-secondary)', marginTop: '10px' }}>{t('interests.subtitle')}</p>
             </div>
 
             {/* Interest Tabs */}

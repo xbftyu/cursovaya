@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -9,13 +10,15 @@ const Login = () => {
   
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
 
   const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const onSubmit = async e => {
     e.preventDefault();
     if (!formData.email || !formData.password) {
-      setError('Please fill all fields');
+      setError(t('login.fillAll'));
       return;
     }
     setLoading(true);
@@ -32,12 +35,12 @@ const Login = () => {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '4rem 0' }}>
       <div className="card" style={{ maxWidth: '400px', width: '100%' }}>
-        <h2 style={{ textAlign: 'center', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>Welcome Back</h2>
-        <p style={{ textAlign: 'center', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Login to your account</p>
+        <h2 style={{ textAlign: 'center', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>{t('login.welcome')}</h2>
+        <p style={{ textAlign: 'center', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>{t('login.subtitle')}</p>
 
         <form onSubmit={onSubmit}>
           <div className="form-group">
-            <label className="form-label">Email Address</label>
+            <label className="form-label">{t('login.email')}</label>
             <input
               type="email"
               name="email"
@@ -49,7 +52,7 @@ const Login = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Password</label>
+            <label className="form-label">{t('login.password')}</label>
             <input
               type="password"
               name="password"
@@ -63,13 +66,13 @@ const Login = () => {
           {error && <div style={{ color: 'var(--danger)', textAlign: 'center', marginBottom: '1.5rem' }}>{error}</div>}
 
           <button type="submit" className="btn btn-primary" style={{ width: '100%' }} disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? t('login.loggingIn') : t('login.loginBtn')}
           </button>
         </form>
 
         <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-          Don't have an account?{' '}
-          <Link to="/register" style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>Register here</Link>
+          {t('login.noAccount')}{' '}
+          <Link to="/register" style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>{t('login.registerHere')}</Link>
         </p>
       </div>
     </div>
