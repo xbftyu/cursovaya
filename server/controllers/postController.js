@@ -1,8 +1,5 @@
 const Post = require('../models/Post');
 
-// @desc    Fetch all posts (with pagination, sort, search)
-// @route   GET /api/posts
-// @access  Public
 const getPosts = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -14,12 +11,12 @@ const getPosts = async (req, res) => {
     if (req.query.search) {
       query.$text = { $search: req.query.search };
     }
-    
+
     if (req.query.category) {
       query.category = req.query.category;
     }
 
-    let sortConfig = { createdAt: -1 }; // default new
+    let sortConfig = { createdAt: -1 };
     if (req.query.sort === 'popular') {
       sortConfig = { views: -1 };
     }
@@ -45,9 +42,6 @@ const getPosts = async (req, res) => {
   }
 };
 
-// @desc    Fetch single post
-// @route   GET /api/posts/:id
-// @access  Public
 const getPostById = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)
@@ -55,7 +49,6 @@ const getPostById = async (req, res) => {
       .populate('category', 'name');
 
     if (post) {
-      // Increment view count
       post.views += 1;
       await post.save();
       res.json(post);
@@ -67,9 +60,6 @@ const getPostById = async (req, res) => {
   }
 };
 
-// @desc    Create a post
-// @route   POST /api/posts
-// @access  Private
 const createPost = async (req, res) => {
   try {
     const { title, content, category, tags, image } = req.body;
@@ -93,9 +83,6 @@ const createPost = async (req, res) => {
   }
 };
 
-// @desc    Delete a post
-// @route   DELETE /api/posts/:id
-// @access  Private
 const deletePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -104,7 +91,6 @@ const deletePost = async (req, res) => {
       return res.status(404).json({ message: 'Post not found' });
     }
 
-    // Check ownership or moderator/admin rights
     if (post.author.toString() !== req.user._id.toString() && req.user.role !== 'admin' && req.user.role !== 'moderator') {
       return res.status(401).json({ message: 'User not authorized to delete this post' });
     }
@@ -116,9 +102,6 @@ const deletePost = async (req, res) => {
   }
 };
 
-// @desc    Like / Unlike a post
-// @route   PUT /api/posts/:id/like
-// @access  Private
 const toggleLike = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -139,9 +122,6 @@ const toggleLike = async (req, res) => {
   }
 };
 
-// @desc    Update a post
-// @route   PUT /api/posts/:id
-// @access  Private
 const updatePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -150,7 +130,6 @@ const updatePost = async (req, res) => {
       return res.status(404).json({ message: 'Post not found' });
     }
 
-    // Check ownership or moderator/admin rights
     if (post.author.toString() !== req.user._id.toString() && req.user.role !== 'admin' && req.user.role !== 'moderator') {
       return res.status(401).json({ message: 'User not authorized to edit this post' });
     }

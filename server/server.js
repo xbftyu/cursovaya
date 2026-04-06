@@ -17,17 +17,14 @@ const path = require("path");
 
 const app = express();
 
-// Connect to MongoDB
 connectDB().then(() => {
-  // Seed Categories if empty
   seedCategories();
 });
 
-// Middleware
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5173',
-  process.env.CLIENT_URL, // Vercel URL (set in Render environment variables)
+  process.env.CLIENT_URL,
 ].filter(Boolean);
 
 app.use(cors({
@@ -42,7 +39,6 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
@@ -51,14 +47,12 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/upload", uploadRoutes);
 
-// Static folder for file uploads
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 
 app.get("/", (req, res) => {
   res.send("API running");
 });
 
-// Error handling middleware
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;

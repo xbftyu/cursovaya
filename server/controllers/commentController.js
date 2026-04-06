@@ -1,8 +1,5 @@
 const Comment = require('../models/Comment');
 
-// @desc    Get comments for a post
-// @route   GET /api/comments/post/:postId
-// @access  Public
 const getCommentsByPost = async (req, res) => {
   try {
     const comments = await Comment.find({ post: req.params.postId }).populate('author', 'username avatar');
@@ -12,9 +9,6 @@ const getCommentsByPost = async (req, res) => {
   }
 };
 
-// @desc    Add comment to a post
-// @route   POST /api/comments
-// @access  Private
 const createComment = async (req, res) => {
   try {
     const { text, postId } = req.body;
@@ -34,9 +28,6 @@ const createComment = async (req, res) => {
   }
 };
 
-// @desc    Delete comment
-// @route   DELETE /api/comments/:id
-// @access  Private
 const deleteComment = async (req, res) => {
   try {
     const comment = await Comment.findById(req.params.id);
@@ -56,9 +47,6 @@ const deleteComment = async (req, res) => {
   }
 };
 
-// @desc    Update comment
-// @route   PUT /api/comments/:id
-// @access  Private
 const updateComment = async (req, res) => {
   try {
     const comment = await Comment.findById(req.params.id);
